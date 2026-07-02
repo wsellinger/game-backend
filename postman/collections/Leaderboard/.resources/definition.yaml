@@ -26,4 +26,4 @@ auth:
       headerPrefix: Bearer
       queryParamKey: token
       header: "{}"
-      secret: "{{jwtSecret}}"
+      secret: "{{vault:jwtSecretAzure}}"

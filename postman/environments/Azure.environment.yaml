@@ -1,4 +1,4 @@
-name: Docker
+name: Azure
 values:
   - key: authHostUrl
     value: ''
@@ -7,7 +7,7 @@ values:
   - key: testPlayer
     value: ''
   - key: token
-    secret: true
+    value: ''
   - key: jwtSecret
-    secret: true
-color: 180
+    value: ''
+color: 240

@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/azure/">
+    <File Path="azure/AzureDeploy.md" />
+    <File Path="azure/AzureServiceDeploy.ps1" />
+    <File Path="azure/AzureSetup.md" />
+    <File Path="azure/AzureSetup.ps1" />
+  </Folder>
   <Folder Name="/Services/">
     <Project Path="Didakt.Api.Auth/Didakt.Api.Auth.csproj" />
     <Project Path="Didakt.Api.Leaderboard/Didakt.Api.Leaderboard.csproj" />
