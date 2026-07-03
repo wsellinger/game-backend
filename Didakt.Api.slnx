@@ -5,17 +5,24 @@
     <File Path="azure/AzureSetup.md" />
     <File Path="azure/AzureSetup.ps1" />
   </Folder>
+  <Folder Name="/docker/">
+    <File Path=".dockerignore" />
+    <File Path="docker-compose-up.bat" />
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/github/">
+    <File Path=".github/workflows/deploy-auth.yml" />
+    <File Path=".github/workflows/deploy-leaderboard.yml" />
+    <File Path=".github/workflows/deploy-service-reusable.yml" />
+    <File Path=".gitignore" />
+  </Folder>
   <Folder Name="/Services/">
     <Project Path="Didakt.Api.Auth/Didakt.Api.Auth.csproj" />
     <Project Path="Didakt.Api.Leaderboard/Didakt.Api.Leaderboard.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
-    <File Path=".dockerignore" />
     <File Path=".env.shared" />
     <File Path=".env.shared.example" />
-    <File Path=".gitignore" />
-    <File Path="docker-compose-up.bat" />
-    <File Path="docker-compose.yml" />
     <File Path="README.md" />
   </Folder>
   <Folder Name="/Tests/" />
