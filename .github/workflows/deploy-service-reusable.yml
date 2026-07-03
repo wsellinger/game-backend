@@ -20,13 +20,13 @@ on:
         type: string
         default: "didaktacr"
 
+permissions:
+  id-token: write # required for OIDC federated login
+  contents: read
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
-    permissions:
-      id-token: write # required for OIDC federated login
-      contents: read
 
     steps:
       - name: Checkout
