@@ -7,7 +7,7 @@
     <File Path="azure/AzureSetup.ps1" />
   </Folder>
   <Folder Name="/demo/">
-    <File Path="demo/index.html" />
+    <File Path="index.html" />
   </Folder>
   <Folder Name="/docker/">
     <File Path=".dockerignore" />
