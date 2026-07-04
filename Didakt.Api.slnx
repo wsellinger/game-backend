@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/azure/">
     <File Path="azure/AzureDeploy.md" />
+    <File Path="azure/AzureFederatedCredentialSetup.md" />
     <File Path="azure/AzureServiceDeploy.ps1" />
     <File Path="azure/AzureSetup.md" />
     <File Path="azure/AzureSetup.ps1" />
