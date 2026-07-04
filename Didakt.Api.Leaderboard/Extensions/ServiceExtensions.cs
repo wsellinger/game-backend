@@ -14,6 +14,9 @@ internal static class ServiceExtensions
         {
             services.AddOpenApi();
             services.AddValidatorsFromAssemblyContaining<Program>();
+            services.AddCors();
+
+            //Redis
             services.AddSingleton<IConnectionMultiplexer>(sp => 
                 ConnectionMultiplexer.Connect(
                     sp.GetRequiredService<IConfiguration>().GetConnectionString("Redis")!));

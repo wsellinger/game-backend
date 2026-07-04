@@ -21,6 +21,7 @@ internal static class ServiceExtensions
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddSingleton(TimeProvider.System);
+            services.AddCors();
 
             //PostgreSQL
             services.AddDbContext<AuthDbContext>(options =>
