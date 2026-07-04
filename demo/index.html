@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Didakt API — Demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --surface-0: #f1efe8;
+      --surface-1: #f7f6f2;
+      --surface-2: #ffffff;
+      --text-primary: #1a1a18;
+      --text-secondary: #5f5e5a;
+      --text-muted: #888780;
+      --border: rgba(0,0,0,0.1);
+      --border-strong: rgba(0,0,0,0.18);
+      --bg-accent: #e6f1fb;
+      --text-accent: #185fa5;
+      --bg-success: #eaf3de;
+      --text-success: #3b6d11;
+      --bg-danger: #fcebeb;
+      --text-danger: #a32d2d;
+      --bg-warning: #faeeda;
+      --text-warning: #854f0b;
+      --radius: 8px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --surface-0: #1a1a18;
+        --surface-1: #242422;
+        --surface-2: #2c2c2a;
+        --text-primary: #f1efe8;
+        --text-secondary: #b4b2a9;
+        --text-muted: #888780;
+        --border: rgba(255,255,255,0.1);
+        --border-strong: rgba(255,255,255,0.18);
+        --bg-accent: #042c53;
+        --text-accent: #85b7eb;
+        --bg-success: #173404;
+        --text-success: #97c459;
+        --bg-danger: #501313;
+        --text-danger: #f09595;
+        --bg-warning: #412402;
+        --text-warning: #ef9f27;
+      }
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--surface-0);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .app { width: 100%; max-width: 560px; }
+
+    h1 { font-size: 22px; font-weight: 500; margin-bottom: 0.25rem; }
+    p.subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 1.5rem; }
+
+    input, select, button {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--surface-2);
+      border: 0.5px solid var(--border-strong);
+      border-radius: var(--radius);
+      padding: 0 12px;
+      height: 36px;
+      outline: none;
+      width: 100%;
+    }
+
+    input:focus, select:focus { box-shadow: 0 0 0 2px var(--bg-accent); border-color: var(--text-accent); }
+
+    button {
+      width: auto;
+      cursor: pointer;
+      background: var(--surface-1);
+      transition: background 0.1s;
+    }
+    button:hover { background: var(--surface-0); }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .auth-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 0.5px solid var(--border);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); flex-shrink: 0; }
+    .dot.online { background: #1D9E75; }
+
+    .tabs { display: flex; border-bottom: 0.5px solid var(--border); margin-bottom: 1.5rem; }
+    .tab {
+      padding: 0.5rem 1rem;
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -0.5px;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      width: auto;
+      height: auto;
+      border-radius: 0;
+    }
+    .tab.active { color: var(--text-primary); border-bottom-color: var(--text-primary); font-weight: 500; }
+    .tab:hover { background: none; color: var(--text-primary); }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .card {
+      background: var(--surface-2);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .card-title { font-size: 15px; font-weight: 500; margin-bottom: 1rem; }
+
+    .field { margin-bottom: 0.75rem; }
+    .field label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+    .field input, .field select { width: 100%; }
+
+    .btn-row { display: flex; gap: 0.75rem; margin-top: 1rem; }
+
+    .category-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .category-row label { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+    .category-row select { flex: 1; }
+    .category-row button { width: 36px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    .msg {
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .msg.success { background: var(--bg-success); color: var(--text-success); display: block; }
+    .msg.error { background: var(--bg-danger); color: var(--text-danger); display: block; }
+    .msg.info { background: var(--bg-accent); color: var(--text-accent); display: block; }
+
+    .leaderboard-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .leaderboard-table th {
+      text-align: left;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 0 0 8px;
+      border-bottom: 0.5px solid var(--border);
+    }
+    .leaderboard-table td { padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+    .leaderboard-table tr:last-child td { border-bottom: none; }
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--surface-1);
+      color: var(--text-secondary);
+    }
+    .rank-badge.gold { background: #FAC775; color: #633806; }
+    .rank-badge.silver { background: var(--surface-1); color: var(--text-primary); border: 0.5px solid var(--border-strong); }
+    .rank-badge.bronze { background: var(--bg-warning); color: var(--text-warning); }
+
+    .empty { font-size: 14px; color: var(--text-muted); padding: 0.5rem 0; }
+    .loading { font-size: 14px; color: var(--text-muted); padding: 1rem 0; }
+    .load-error { font-size: 14px; color: var(--text-danger); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Didakt API</h1>
+    <p class="subtitle">Game backend demo — auth &amp; leaderboards</p>
+
+    <div class="auth-status">
+      <div class="dot" id="authDot"></div>
+      <span id="authStatusText">Not logged in</span>
+      <button id="logoutBtn" style="display:none; margin-left:auto; font-size:13px; height:28px; padding: 0 10px;" onclick="logout()">Log out</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('leaderboard', this)">Leaderboard</button>
+      <button class="tab" onclick="showTab('auth', this)">Sign in</button>
+      <button class="tab" onclick="showTab('score', this)">Submit score</button>
+    </div>
+
+    <div id="tab-leaderboard" class="section active">
+      <div class="category-row">
+        <label>Category</label>
+        <select id="viewCategory" onchange="loadLeaderboard()">
+          <option value="1v1">1v1</option>
+          <option value="2v2">2v2</option>
+          <option value="ffa">FFA</option>
+          <option value="ranked">Ranked</option>
+        </select>
+        <button onclick="loadLeaderboard()" aria-label="Refresh">
+          <i class="ti ti-refresh" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="card">
+        <div id="leaderboardContent" class="loading">Loading...</div>
+      </div>
+    </div>
+
+    <div id="tab-auth" class="section">
+      <div class="card">
+        <div class="card-title">Sign in</div>
+        <div class="field">
+          <label for="authUsername">Username</label>
+          <input type="text" id="authUsername" placeholder="enter username" autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="authPassword">Password</label>
+          <input type="password" id="authPassword" placeholder="enter password" autocomplete="current-password">
+        </div>
+        <div class="btn-row">
+          <button onclick="login()">Sign in</button>
+          <button onclick="register()">Register</button>
+        </div>
+        <div id="authMsg" class="msg"></div>
+      </div>
+    </div>
+
+    <div id="tab-score" class="section">
+      <div class="card">
+        <div class="card-title">Submit a score</div>
+        <div id="scoreAuthNote" class="msg info">Sign in to submit a score</div>
+        <div class="field" style="margin-top:0.75rem;">
+          <label for="scoreCategory">Category</label>
+          <select id="scoreCategory">
+            <option value="1v1">1v1</option>
+            <option value="2v2">2v2</option>
+            <option value="ffa">FFA</option>
+            <option value="ranked">Ranked</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="scoreValue">Score</label>
+          <input type="number" id="scoreValue" placeholder="0" min="0">
+        </div>
+        <div class="btn-row">
+          <button onclick="submitScore()" id="submitBtn" disabled>Submit</button>
+        </div>
+        <div id="scoreMsg" class="msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const AUTH_BASE = 'https://didakt-auth.happyground-350d73a8.centralus.azurecontainerapps.io';
+    const LEADERBOARD_BASE = 'https://didakt-leaderboard.happyground-350d73a8.centralus.azurecontainerapps.io';
+
+    let state = { accessToken: null, refreshToken: null, username: null };
+
+    function showTab(tab, btn) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+      btn.classList.add('active');
+      if (tab === 'leaderboard') loadLeaderboard();
+    }
+
+    function updateAuthStatus() {
+      const dot = document.getElementById('authDot');
+      const text = document.getElementById('authStatusText');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const submitBtn = document.getElementById('submitBtn');
+      const scoreNote = document.getElementById('scoreAuthNote');
+      if (state.username) {
+        dot.classList.add('online');
+        text.textContent = 'Signed in as ' + state.username;
+        logoutBtn.style.display = 'block';
+        submitBtn.disabled = false;
+        scoreNote.style.display = 'none';
+      } else {
+        dot.classList.remove('online');
+        text.textContent = 'Not logged in';
+        logoutBtn.style.display = 'none';
+        submitBtn.disabled = true;
+        scoreNote.style.display = 'block';
+      }
+    }
+
+    function showMsg(id, text, type) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = 'msg ' + type;
+    }
+
+    async function register() {
+      const username = document.getElementById('authUsername').value.trim();
+      const password = document.getElementById('authPassword').value;
+      if (!username || !password) return showMsg('authMsg', 'Enter a username and password.', 'error');
+      try {
+        const res = await fetch(AUTH_BASE + '/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userName: username, password })
+        });
+        if (res.status === 201) {
+          showMsg('authMsg', 'Account created. Sign in now.', 'success');
+        } else if (res.status === 409) {
+          showMsg('authMsg', 'That username is taken.', 'error');
+        } else {
+          showMsg('authMsg', 'Registration failed. Password must be 12+ characters.', 'error');
+        }
+      } catch (e) {
+        showMsg('authMsg', 'Could not reach the auth service.', 'error');
+      }
+    }
+
+    async function login() {
+      const username = document.getElementById('authUsername').value.trim();
+      const password = document.getElementById('authPassword').value;
+      if (!username || !password) return showMsg('authMsg', 'Enter a username and password.', 'error');
+      try {
+        const res = await fetch(AUTH_BASE + '/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userName: username, password })
+        });
+        if (res.ok) {
+          const body = await res.json();
+          state = { accessToken: body.accessToken, refreshToken: body.refreshToken, username };
+          updateAuthStatus();
+          showMsg('authMsg', 'Signed in.', 'success');
+        } else {
+          showMsg('authMsg', 'Invalid username or password.', 'error');
+        }
+      } catch (e) {
+        showMsg('authMsg', 'Could not reach the auth service.', 'error');
+      }
+    }
+
+    async function logout() {
+      if (state.refreshToken) {
+        await fetch(AUTH_BASE + '/auth/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.accessToken },
+          body: JSON.stringify({ refreshToken: state.refreshToken })
+        }).catch(() => {});
+      }
+      state = { accessToken: null, refreshToken: null, username: null };
+      updateAuthStatus();
+    }
+
+    async function submitScore() {
+      const category = document.getElementById('scoreCategory').value;
+      const score = parseFloat(document.getElementById('scoreValue').value);
+      if (!score && score !== 0) return showMsg('scoreMsg', 'Enter a score.', 'error');
+      try {
+        const res = await fetch(LEADERBOARD_BASE + '/leaderboard/' + category + '/score', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.accessToken },
+          body: JSON.stringify({ player: state.username, score })
+        });
+        if (res.ok) {
+          showMsg('scoreMsg', 'Score submitted.', 'success');
+        } else if (res.status === 401) {
+          showMsg('scoreMsg', 'Session expired. Sign in again.', 'error');
+        } else {
+          showMsg('scoreMsg', 'Failed to submit score.', 'error');
+        }
+      } catch (e) {
+        showMsg('scoreMsg', 'Could not reach the leaderboard service.', 'error');
+      }
+    }
+
+    async function loadLeaderboard() {
+      const category = document.getElementById('viewCategory').value;
+      const content = document.getElementById('leaderboardContent');
+      content.className = 'loading';
+      content.innerHTML = 'Loading...';
+      try {
+        const res = await fetch(LEADERBOARD_BASE + '/leaderboard/' + category + '/top?count=10');
+        if (!res.ok) throw new Error();
+        const players = await res.json();
+        if (!players || players.length === 0) {
+          content.className = '';
+          content.innerHTML = '<p class="empty">No scores yet for this category.</p>';
+          return;
+        }
+        const rows = players.map(p => {
+          const badgeClass = p.rank === 1 ? 'gold' : p.rank === 2 ? 'silver' : p.rank === 3 ? 'bronze' : '';
+          return `<tr>
+            <td><span class="rank-badge ${badgeClass}">${p.rank}</span></td>
+            <td style="padding-left:12px;">${p.player}</td>
+            <td style="text-align:right; font-variant-numeric: tabular-nums;">${p.score.toLocaleString()}</td>
+          </tr>`;
+        }).join('');
+        content.className = '';
+        content.innerHTML = `<table class="leaderboard-table">
+          <thead><tr>
+            <th style="width:36px;">#</th>
+            <th style="padding-left:12px;">Player</th>
+            <th style="text-align:right;">Score</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+      } catch (e) {
+        content.className = '';
+        content.innerHTML = '<p class="load-error">Could not load leaderboard.</p>';
+      }
+    }
+
+    updateAuthStatus();
+    loadLeaderboard();
+  </script>
+</body>
+</html>
