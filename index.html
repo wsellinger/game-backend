@@ -137,6 +137,7 @@
     .field { margin-bottom: 0.75rem; }
     .field label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
     .field input, .field select { width: 100%; }
+    .field-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
     .btn-row { display: flex; gap: 0.75rem; margin-top: 1rem; }
 
@@ -226,14 +227,16 @@
 
     <div id="tab-auth" class="section">
       <div class="card">
-        <div class="card-title">Sign in</div>
+        <div class="card-title">Sign in / Register</div>
         <div class="field">
           <label for="authUsername">Username</label>
           <input type="text" id="authUsername" placeholder="enter username" autocomplete="username">
+          <p class="field-hint">3–20 characters. Letters, numbers, underscores and hyphens only.</p>
         </div>
         <div class="field">
           <label for="authPassword">Password</label>
           <input type="password" id="authPassword" placeholder="enter password" autocomplete="current-password">
+          <p class="field-hint">Minimum 12 characters.</p>
         </div>
         <div class="btn-row">
           <button onclick="login()">Sign in</button>
@@ -324,7 +327,13 @@
         } else if (res.status === 409) {
           showMsg('authMsg', 'That username is taken.', 'error');
         } else {
-          showMsg('authMsg', 'Registration failed. Password must be 12+ characters.', 'error');
+          const body = await res.json().catch(() => null);
+          if (body?.errors) {
+            const messages = Object.values(body.errors).flat().join(' ');
+            showMsg('authMsg', messages, 'error');
+          } else {
+            showMsg('authMsg', 'Registration failed.', 'error');
+          }
         }
       } catch (e) {
         showMsg('authMsg', 'Could not reach the auth service.', 'error');
