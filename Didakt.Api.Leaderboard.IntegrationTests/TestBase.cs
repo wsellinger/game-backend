@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
 using Testcontainers.Redis;
 
@@ -47,11 +48,15 @@ namespace Didakt.Api.Leaderboard.IntegrationTests
             await Factory.DisposeAsync();
         }
 
-        protected void Authenticate()
+        protected void Authenticate(string username = "defaultUser")
         {
             var token = new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
                 issuer: JwtIssuer,
                 audience: JwtAudience,
+                claims: [
+                    new Claim(ClaimTypes.Name, username),
+                    new Claim(ClaimTypes.NameIdentifier, "1")
+                ],
                 expires: DateTime.UtcNow.AddMinutes(15),
                 signingCredentials: new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSecret)),

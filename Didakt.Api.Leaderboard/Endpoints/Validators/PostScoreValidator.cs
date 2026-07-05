@@ -7,9 +7,6 @@ public class PostScoreValidator : AbstractValidator<PostScoreRequest>
 {
     public PostScoreValidator()
     {
-        RuleFor(x => x.Player)
-            .NotEmpty();
-
         RuleFor(x => x.Score)
             .NotEmpty()
             .GreaterThan(0);

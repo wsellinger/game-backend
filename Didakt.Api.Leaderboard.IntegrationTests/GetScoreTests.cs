@@ -12,14 +12,14 @@ namespace Didakt.Api.Leaderboard.IntegrationTests
         public async Task ValidRequest_ReturnsOk()
         {
             //Arrange
-            Authenticate();
-
-            var player = "testPlayer";
             var score = 1234.0;
-            var parameters = $"?player={player}";
+            var postBody = new { score } ;
+            var player = "testPlayer";
 
-            var postBody = new { player, score } ;
+            Authenticate(player);
             await Client.PostAsJsonAsync(RequestUri, postBody);
+            
+            var parameters = $"?player={player}";
 
             //Act
             var response = await Client.GetAsync(RequestUri + parameters);

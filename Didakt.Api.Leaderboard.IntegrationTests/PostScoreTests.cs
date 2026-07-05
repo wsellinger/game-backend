@@ -12,7 +12,7 @@ namespace Didakt.Api.Leaderboard.IntegrationTests
         {
             //Arrange
             Authenticate();
-            var requestBody = new { Player = "testPlayer", Score = 1234.0 };
+            var requestBody = new { Score = 1234.0 };
 
             //Act
             var response = await Client.PostAsJsonAsync(RequestUri, requestBody);
@@ -25,7 +25,7 @@ namespace Didakt.Api.Leaderboard.IntegrationTests
         public async Task NoToken_ReturnsUnauthorized()
         {
             //Arrange
-            var requestBody = new { Player = "testPlayer", Score = 1234.0 };
+            var requestBody = new { Score = 1234.0 };
 
             //Act
             var response = await Client.PostAsJsonAsync(RequestUri, requestBody);
@@ -40,7 +40,7 @@ namespace Didakt.Api.Leaderboard.IntegrationTests
             //Arrange
             Authenticate();
 
-            var requestBody = new { Player = "", Score = 1234.0 };
+            var requestBody = new { Score = -1234.0 };
 
             //Act
             var response = await Client.PostAsJsonAsync(RequestUri, requestBody);

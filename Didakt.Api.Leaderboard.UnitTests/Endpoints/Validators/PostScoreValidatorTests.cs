@@ -9,9 +9,8 @@ namespace Didakt.Api.Leaderboard.UnitTests.Endpoints.Validators
         public async Task ValidInput_IsValid()
         {
             //Arrange
-            var userName = "testUser";
             var score = 1;
-            var request = new PostScoreRequest(userName, score);
+            var request = new PostScoreRequest(score);
             var validator = new PostScoreValidator();
 
             //Act
@@ -22,15 +21,13 @@ namespace Didakt.Api.Leaderboard.UnitTests.Endpoints.Validators
         }
 
         [Theory]
-        [InlineData(null, 1.0)] //Null Player
-        [InlineData("", 1.0)] //Empty Player
-        [InlineData("user", null)] //Null Score
-        [InlineData("user", 0.0)] //Empty Score
-        [InlineData("user", -1.0)] //Negative Score
-        public async Task InvalidInput_IsNotValid(string? userName, double? score)
+        [InlineData(null)] //Null Score
+        [InlineData(0.0)] //Empty Score
+        [InlineData(-1.0)] //Negative Score
+        public async Task InvalidInput_IsNotValid(double? score)
         {
             //Arrange
-            var request = new PostScoreRequest(userName, score);
+            var request = new PostScoreRequest(score);
             var validator = new PostScoreValidator();
 
             //Act

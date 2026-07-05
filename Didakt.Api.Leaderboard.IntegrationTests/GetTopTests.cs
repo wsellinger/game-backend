@@ -13,8 +13,6 @@ namespace Didakt.Api.Leaderboard.IntegrationTests
         public async Task ValidRequest_ReturnsOk()
         {
             //Arrange
-            Authenticate();
-
             var count = 3;
             var parameters = $"?count={count}";
 
@@ -34,7 +32,10 @@ namespace Didakt.Api.Leaderboard.IntegrationTests
             };
 
             foreach (var entry in entries)
-                await Client.PostAsJsonAsync(ScoreUri, entry);
+            {
+                Authenticate(entry.Player);
+                await Client.PostAsJsonAsync(ScoreUri, new { entry.Score });
+            }
 
             //Act
             var response = await Client.GetAsync(TopUri + parameters);

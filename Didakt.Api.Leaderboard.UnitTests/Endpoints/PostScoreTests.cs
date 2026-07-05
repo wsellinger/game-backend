@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Moq;
 using StackExchange.Redis;
+using System.Security.Claims;
 
 namespace Didakt.Api.Leaderboard.UnitTests.Endpoints
 {
@@ -30,13 +31,15 @@ namespace Didakt.Api.Leaderboard.UnitTests.Endpoints
             var category = "testCategory";
             var player = "testPlayer";
             var score = 1234;
-            var request = new PostScoreRequest(player, score);
+            var request = new PostScoreRequest(score);
+            var context = new DefaultHttpContext() { 
+                User = new(new ClaimsIdentity([new Claim(ClaimTypes.Name, player)])) };
 
             _validator.Setup(x => x.ValidateAsync(It.IsAny<PostScoreRequest>())).ReturnsAsync(new ValidationResult());
             _database.Setup(x => x.SortedSetAddAsync(It.IsAny<RedisKey>(), It.IsAny<RedisValue>(), It.IsAny<double>()));
 
             //Act
-            var result = await EndpointMethods.PostScore(category, request, _validator.Object, _connection.Object);
+            var result = await EndpointMethods.PostScore(category, request, _validator.Object, _connection.Object, context);
 
             //Assert
             _validator.Verify(x => x.ValidateAsync(request), Times.Once);
@@ -50,15 +53,15 @@ namespace Didakt.Api.Leaderboard.UnitTests.Endpoints
         {
             //Arrange
             var category = "testCategory";
-            var player = "testPlayer";
             var score = 1234;
-            var request = new PostScoreRequest(player, score);
+            var request = new PostScoreRequest(score);
+            var context = new DefaultHttpContext();
 
             _validator.Setup(x => x.ValidateAsync(It.IsAny<PostScoreRequest>())).ReturnsAsync(FailedValidation);
             _database.Setup(x => x.SortedSetAddAsync(It.IsAny<RedisKey>(), It.IsAny<RedisValue>(), It.IsAny<double>()));
 
             //Act
-            var result = await EndpointMethods.PostScore(category, request, _validator.Object, _connection.Object);
+            var result = await EndpointMethods.PostScore(category, request, _validator.Object, _connection.Object, context);
 
             //Assert
             _validator.Verify(x => x.ValidateAsync(request), Times.Once);
