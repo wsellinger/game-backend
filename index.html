@@ -330,6 +330,12 @@
                 color: var(--text-warning);
             }
 
+        .load-error a, .msg a {
+            color: inherit;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
         .empty {
             font-size: 14px;
             color: var(--text-muted);
@@ -346,6 +352,12 @@
             font-size: 14px;
             color: var(--text-danger);
         }
+
+            .load-error a, .msg a {
+                color: inherit;
+                text-decoration: underline;
+                font-weight: 500;
+            }
     </style>
 </head>
 <body>
@@ -434,6 +446,10 @@
         const LEADERBOARD_BASE = 'https://didakt-leaderboard.happyground-350d73a8.centralus.azurecontainerapps.io';
 
         let state = { accessToken: null, refreshToken: null, username: null };
+
+        const DEMO_DOWN_MSG = 'The leaderboard datastore is currently spun down to save on cloud costs between demos. ' +
+            'Want to see it live? <a href="mailto:wsellinger@gmail.com?subject=Didakt%20API%20demo%20request" target="_blank" rel="noopener">Email me</a> ' +
+            'or reach out on <a href="https://www.linkedin.com/in/william-sellinger-6b963a1b/" target="_blank" rel="noopener">LinkedIn</a> and I\'ll spin it back up.';
 
         function showTab(tab, btn) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -541,12 +557,15 @@
                 const res = await fetch(LEADERBOARD_BASE + '/leaderboard/' + category + '/score', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.accessToken },
-                    body: JSON.stringify({ score })
+                    body: JSON.stringify({ player: state.username, score })
                 });
                 if (res.ok) {
                     showMsg('scoreMsg', 'Score submitted.', 'success');
                 } else if (res.status === 401) {
                     showMsg('scoreMsg', 'Session expired. Sign in again.', 'error');
+                } else if (res.status >= 500) {
+                    document.getElementById('scoreMsg').innerHTML = DEMO_DOWN_MSG;
+                    document.getElementById('scoreMsg').className = 'msg error';
                 } else {
                     showMsg('scoreMsg', 'Failed to submit score.', 'error');
                 }
@@ -555,6 +574,10 @@
             }
         }
 
+        const DEMO_DOWN_MSG = 'The leaderboard datastore is currently spun down to save on cloud costs between demos. ' +
+            'Want to see it live? <a href="mailto:wsellinger@gmail.com?subject=Didakt%20API%20demo%20request" target="_blank" rel="noopener">Email me</a> ' +
+            'or reach out on <a href="https://www.linkedin.com/in/wsellinger" target="_blank" rel="noopener">LinkedIn</a> and I\'ll spin it back up.';
+
         async function loadLeaderboard() {
             const category = document.getElementById('viewCategory').value;
             const content = document.getElementById('leaderboardContent');
@@ -562,6 +585,11 @@
             content.innerHTML = 'Loading...';
             try {
                 const res = await fetch(LEADERBOARD_BASE + '/leaderboard/' + category + '/top?count=10');
+                if (res.status >= 500) {
+                    content.className = '';
+                    content.innerHTML = '<p class="load-error">' + DEMO_DOWN_MSG + '</p>';
+                    return;
+                }
                 if (!res.ok) throw new Error();
                 const players = await res.json();
                 if (!players || players.length === 0) {
