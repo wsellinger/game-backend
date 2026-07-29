@@ -20,6 +20,16 @@ internal static class AppExtensions
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    context.Response.StatusCode = 503;
+                    context.Response.ContentType = "application/json";
+                    await context.Response.WriteAsJsonAsync(new { error = "Service temporarily unavailable." });
+                });
+            });
+
             app.UseAuthentication();
             app.UseAuthorization();
 
